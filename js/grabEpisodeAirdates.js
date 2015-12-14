@@ -75,16 +75,24 @@ var convertHtmlFiles = function() {
 };
 
 var convertHtmlFile = function(data) {
+  var json = '[';
   $ = cheerio.load(data);
   $('li').each(function(idx, elem) {
-    handleHtmlListItem($(this));
+    json += makeJsonFromHtmlListItem($(this)) + ',';
   });
+  json = json.substring(0,json.length-1);
+  json += ']';
+  console.log(json);
 };
 
-var handleHtmlListItem = function(elem) {
+var makeJsonFromHtmlListItem = function(elem) {
     var itemDate = elem.children('.l1').text();
+    itemDate = itemDate.substring(itemDate.indexOf(',')+2, itemDate.length);
     var itemTime = elem.children('.l2').text();
-    console.dir(itemDate + " - " + itemTime);
+    itemTime = itemTime.replace(' Uhr', '').replace('.', ':');
+    
+    return '{"date":"' + itemDate + '","time":"' + itemTime + '"}';
+//    console.log(itemDate + " - " + itemTime);
 };
 
 if (seriesId) {
